@@ -1,0 +1,49 @@
+{
+  "project_info": {
+    "project_number": "290679660576",
+    "firebase_url": "https://fir-authentication-52f17-default-rtdb.firebaseio.com",
+    "project_id": "fir-authentication-52f17",
+    "storage_bucket": "fir-authentication-52f17.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290679660576:android:f7b0f94fa942a4b9421c45",
+        "android_client_info": {
+          "package_name": "com.example.firebaseauthentication"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb1FwJHyzu2P-oRo_RfqoL5N7z_gzcvVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:290679660576:android:4ac95b81f8e4f74c421c45",
+        "android_client_info": {
+          "package_name": "com.example.my_messenger"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBb1FwJHyzu2P-oRo_RfqoL5N7z_gzcvVc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
