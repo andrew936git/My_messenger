@@ -1,0 +1,23 @@
+<resources>
+    <string name="app_name"></string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="emailETHint">Электронная почта</string>
+    <string name="passwordETHint">Пароль</string>
+    <string name="registrationBTText">Зарегистрироваться</string>
+    <string name="forgotPasswordTVText">Забыл(а) пароль?</string>
+    <string name="noAccountTVText">Нет аккаунта?</string>
+    <string name="registrationTVText">Зарегистрироваться</string>
+    <string name="enterBTText">Войти</string>
+    <string name="btnLoginText">Войти</string>
+    <string name="tvRegisterText">Зарегистрироваться</string>
+    <string name="tvForgotPasswordText">Забыли пароль?</string>
+    <string name="tvWelcomeText">Добро пожаловать!</string>
+    <string name="etEmailHint">Email</string>
+    <string name="etPasswordHint">Пароль</string>
+    <string name="tvRegisterWelcomeText">Регистрация</string>
+    <string name="etRegisterEmailHint">Email</string>
+    <string name="etRegisterPasswordHint">Пароль</string>
+    <string name="etRegisterConfirmPasswordHint">Подтвердите пароль</string>
+    <string name="btnRegisterText">Зарегистрироваться</string>
+</resources>
