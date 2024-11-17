@@ -15,6 +15,7 @@ class ViewModelFactory(
             modelClass.isAssignableFrom(RegisterViewModel::class.java) -> RegisterViewModel(firebaseAuth) as T
             modelClass.isAssignableFrom(ChatListViewModel::class.java) -> ChatListViewModel() as T
             modelClass.isAssignableFrom(UserListViewModel::class.java) -> UserListViewModel() as T
+            modelClass.isAssignableFrom(ForgotPasswordViewModel::class.java) -> ForgotPasswordViewModel(firebaseAuth) as T
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }
