@@ -1,23 +1,24 @@
 package com.example.my_messenger
 
-import android.app.Application
+import android.annotation.SuppressLint
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.viewModels
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.my_messenger.databinding.FragmentRegisterBinding
+import com.google.firebase.auth.FirebaseAuth
 
 
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
-    val viewModel: RegisterViewModel by viewModels()
+    private lateinit var viewModel: RegisterViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -27,36 +28,46 @@ class RegisterFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val factory = ViewModelFactory(firebaseAuth)
+        viewModel = ViewModelProvider(this, factory)[RegisterViewModel::class.java]
 
-        binding.btnRegister.setOnClickListener {
-            val email = binding.etRegisterEmail.text.toString()
-            val password = binding.etRegisterPassword.text.toString()
-            val confirmPassword = binding.etRegisterConfirmPassword.text.toString()
-            viewModel.register(email, password, confirmPassword)
+        val emailInput = binding.etRegisterEmail
+        val passwordInput = binding.etRegisterPassword
+        val registerButton = binding.btnRegister
+
+
+        registerButton.setOnClickListener {
+            val email = emailInput.text.toString()
+            val password = passwordInput.text.toString()
+
+            registerButton.isEnabled = false
+            registerButton.text = "Загрузка..."
+
+            viewModel.register(email, password)
         }
 
-        observeViewModel()
-    }
+        viewModel.isRegistering.observe(viewLifecycleOwner) { isRegistering ->
+            registerButton.isEnabled = !isRegistering
+            registerButton.text = if (isRegistering) "Загрузка..." else "Зарегистрироваться"
+        }
 
-    private fun observeViewModel() {
-        viewModel.registerSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
+        viewModel.error.observe(viewLifecycleOwner) { error ->
+            error?.let {
+                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            }
+        }
+
+        viewModel.isRegistered.observe(viewLifecycleOwner) { isRegistered ->
+            if (isRegistered) {
                 Toast.makeText(context, "Регистрация успешна", Toast.LENGTH_SHORT).show()
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
             }
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
-            error?.let {
-                Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-            }
-        }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
     }
 }
+

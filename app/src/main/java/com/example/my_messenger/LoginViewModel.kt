@@ -1,32 +1,37 @@
 package com.example.my_messenger
 
-import android.app.Application
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
 
-public class LoginViewModel(): ViewModel() {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
-    private val _loginSuccess = MutableLiveData<Boolean>()
-    val loginSuccess: LiveData<Boolean> get() = _loginSuccess
+    private val _isLoggingIn = MutableLiveData<Boolean>()
+    val isLoggingIn: LiveData<Boolean> get() = _isLoggingIn
 
-    private val _errorMessage = MutableLiveData<String?>()
-    val errorMessage: LiveData<String?> get() = _errorMessage
+    private val _error = MutableLiveData<String?>()
+    val error: LiveData<String?> get() = _error
+
+    private val _isLoggedIn = MutableLiveData<Boolean>()
+    val isLoggedIn: LiveData<Boolean> get() = _isLoggedIn
 
     fun login(email: String, password: String) {
-        if (email.isBlank() || password.isBlank()) {
-            _errorMessage.value = "Все поля должны быть заполнены"
+        if (email.isEmpty() || password.isEmpty()) {
+            _error.value = "Введите email и пароль"
             return
         }
 
+        _isLoggingIn.value = true
+        _error.value = null
+
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
+                _isLoggingIn.value = false
                 if (task.isSuccessful) {
-                    _loginSuccess.value = true
+                    _isLoggedIn.value = true
                 } else {
-                    _errorMessage.value = task.exception?.localizedMessage
+                    _error.value = task.exception?.message ?: "Ошибка входа"
                 }
             }
     }

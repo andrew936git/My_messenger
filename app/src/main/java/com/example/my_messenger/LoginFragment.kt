@@ -9,14 +9,13 @@ import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.my_messenger.databinding.FragmentLoginBinding
+import com.google.firebase.auth.FirebaseAuth
 
 class LoginFragment : Fragment() {
 
     private var _binding: FragmentLoginBinding? = null
     private val binding get() = _binding!!
-      val viewModel: LoginViewModel by lazy {
-        ViewModelProvider(this)[LoginViewModel::class.java]
-    }
+    private lateinit var viewModel: LoginViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,40 +27,49 @@ class LoginFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val factory = ViewModelFactory(firebaseAuth)
+        viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
-        binding.btnLogin.setOnClickListener {
-            val email = binding.etEmail.text.toString()
-            val password = binding.etPassword.text.toString()
+        val emailInput = binding.etEmail
+        val passwordInput = binding.etPassword
+        val loginButton = binding.btnLogin
+        val registerTV = binding.tvRegister
+        val forgotPasswordTV = binding.tvForgotPassword
+
+        loginButton.setOnClickListener {
+            val email = emailInput.text.toString().trim()
+            val password = passwordInput.text.toString().trim()
+
+            loginButton.isEnabled = false
+            loginButton.text = "Загрузка..."
             viewModel.login(email, password)
         }
 
-        binding.tvRegister.setOnClickListener {
+        registerTV.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_registerFragment)
         }
 
-        binding.tvForgotPassword.setOnClickListener {
+        forgotPasswordTV.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
-            observeViewModel()
-    }
 
-    private fun observeViewModel() {
-        viewModel.loginSuccess.observe(viewLifecycleOwner) { success ->
-            if (success) {
-                Toast.makeText(context, "Успешный вход", Toast.LENGTH_SHORT).show()
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
-            }
+        viewModel.isLoggingIn.observe(viewLifecycleOwner) { isLoggingIn ->
+            loginButton.isEnabled = !isLoggingIn
+            loginButton.text = if (isLoggingIn) "Загрузка..." else "Войти"
         }
 
-        viewModel.errorMessage.observe(viewLifecycleOwner) { error ->
+        viewModel.error.observe(viewLifecycleOwner) { error ->
             error?.let {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
             }
         }
-    }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        _binding = null
+        viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
+            if (isLoggedIn) {
+                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+            }
+        }
+
     }
 }

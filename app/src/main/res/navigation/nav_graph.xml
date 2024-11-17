@@ -4,18 +4,17 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/nav_graph"
-    app:startDestination="@id/registerFragment">
+    app:startDestination="@id/start_fragment">
+
     <fragment
         android:id="@+id/start_fragment"
         android:name="com.example.my_messenger.StartFragment"
         android:label="fragment_start"
-        tools:layout="@layout/fragment_start"
-        >
+        tools:layout="@layout/fragment_start">
         <action
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             />
-
     </fragment>
 
     <fragment
@@ -36,7 +35,32 @@
         android:id="@+id/mainFragment"
         android:name="com.example.my_messenger.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_userListFragment"
+            app:destination="@id/userListFragment" />
+        <action
+            android:id="@+id/action_mainFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.my_messenger.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list">
+        <argument
+            android:name="chatId"
+            app:argType="string" />
+    </fragment>
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.example.my_messenger.UserListFragment"
+        android:label="fragment_user_list"
+        tools:layout="@layout/fragment_user_list">
+        <argument
+            android:name="userId"
+            app:argType="string" />
+    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.my_messenger.LoginFragment"
