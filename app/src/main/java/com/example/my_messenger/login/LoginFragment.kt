@@ -1,5 +1,6 @@
-package com.example.my_messenger
+package com.example.my_messenger.login
 
+import android.content.Context
 import android.os.Bundle
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
@@ -8,8 +9,12 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.my_messenger.R
+import com.example.my_messenger.ViewModelFactory
 import com.example.my_messenger.databinding.FragmentLoginBinding
 import com.google.firebase.auth.FirebaseAuth
+import java.io.InputStreamReader
+import java.io.OutputStreamWriter
 
 class LoginFragment : Fragment() {
 
@@ -22,6 +27,24 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentLoginBinding.inflate(inflater, container, false)
+        val firebaseAuth = FirebaseAuth.getInstance()
+        val factory = ViewModelFactory(firebaseAuth)
+        viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
+
+        try {
+            val fileInputStream = activity?.openFileInput("loginpasswordfile.txt")
+            val inputReader = InputStreamReader(fileInputStream)
+            val output = inputReader.readText().split("/")
+            val outputEmail = output[0]
+            val outputPassword = output[1]
+
+            if (outputEmail.isNotEmpty() &&  outputPassword.isNotEmpty()) {
+                viewModel.login(outputEmail, outputPassword)
+            }
+
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
         return binding.root
     }
 
@@ -40,10 +63,16 @@ class LoginFragment : Fragment() {
         loginButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
             val password = passwordInput.text.toString().trim()
-
-            loginButton.isEnabled = false
-            loginButton.text = "Загрузка..."
             viewModel.login(email, password)
+            try {
+                val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
+                val outputWriter = OutputStreamWriter(fileOutputStream)
+                outputWriter.write("$email/")
+                outputWriter.write(password)
+                outputWriter.close()
+            } catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
 
         registerTV.setOnClickListener {
@@ -54,11 +83,6 @@ class LoginFragment : Fragment() {
             findNavController().navigate(R.id.action_loginFragment_to_forgotPasswordFragment)
         }
 
-        viewModel.isLoggingIn.observe(viewLifecycleOwner) { isLoggingIn ->
-            loginButton.isEnabled = !isLoggingIn
-            loginButton.text = if (isLoggingIn) "Загрузка..." else "Войти"
-        }
-
         viewModel.error.observe(viewLifecycleOwner) { error ->
             error?.let {
                 Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
@@ -67,7 +91,7 @@ class LoginFragment : Fragment() {
 
         viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
-                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
+                findNavController().navigate(R.id.action_loginFragment_to_chatListFragment)
             }
         }
 

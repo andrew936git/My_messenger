@@ -1,4 +1,4 @@
-package com.example.my_messenger
+package com.example.my_messenger.password_recovery
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData

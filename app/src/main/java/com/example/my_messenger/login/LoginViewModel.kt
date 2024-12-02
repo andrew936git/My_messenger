@@ -1,4 +1,4 @@
-package com.example.my_messenger
+package com.example.my_messenger.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -8,7 +8,6 @@ import com.google.firebase.auth.FirebaseAuth
 class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
     private val _isLoggingIn = MutableLiveData<Boolean>()
-    val isLoggingIn: LiveData<Boolean> get() = _isLoggingIn
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
@@ -31,8 +30,8 @@ class LoginViewModel(private val auth: FirebaseAuth) : ViewModel() {
                 if (task.isSuccessful) {
                     _isLoggedIn.value = true
                 } else {
-                    _error.value = task.exception?.message ?: "Ошибка входа"
-                }
+                        _error.value = task.exception?.message ?: "Ошибка входа"
+                    }
             }
     }
 }

@@ -15,11 +15,15 @@
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             />
+        <action
+            android:id="@+id/action_startFragment_to_chat"
+            app:destination="@id/loginFragment"
+            />
     </fragment>
 
     <fragment
         android:id="@+id/registerFragment"
-        android:name="com.example.my_messenger.RegisterFragment"
+        android:name="com.example.my_messenger.registration.RegisterFragment"
         android:label="fragment_register"
         tools:layout="@layout/fragment_register" >
         <action
@@ -28,42 +32,24 @@
     </fragment>
     <fragment
         android:id="@+id/forgotPasswordFragment"
-        android:name="com.example.my_messenger.ForgotPasswordFragment"
+        android:name="com.example.my_messenger.password_recovery.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
     <fragment
-        android:id="@+id/mainFragment"
-        android:name="com.example.my_messenger.MainFragment"
-        android:label="fragment_main"
-        tools:layout="@layout/fragment_main" >
-        <action
-            android:id="@+id/action_mainFragment_to_userListFragment"
-            app:destination="@id/userListFragment" />
-        <action
-            android:id="@+id/action_mainFragment_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
-    </fragment>
-    <fragment
         android:id="@+id/chatListFragment"
-        android:name="com.example.my_messenger.ChatListFragment"
+        android:name="com.example.my_messenger.chat.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list">
         <argument
             android:name="chatId"
             app:argType="string" />
-    </fragment>
-    <fragment
-        android:id="@+id/userListFragment"
-        android:name="com.example.my_messenger.UserListFragment"
-        android:label="fragment_user_list"
-        tools:layout="@layout/fragment_user_list">
-        <argument
-            android:name="userId"
-            app:argType="string" />
+        <action
+            android:id="@+id/action_chatListFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
-        android:name="com.example.my_messenger.LoginFragment"
+        android:name="com.example.my_messenger.login.LoginFragment"
         android:label="fragment_login"
         tools:layout="@layout/fragment_login" >
         <action
@@ -73,8 +59,8 @@
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment" />
         <action
-            android:id="@+id/action_loginFragment_to_mainFragment"
-            app:destination="@id/mainFragment" />
+            android:id="@+id/action_loginFragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
     </fragment>
 
 

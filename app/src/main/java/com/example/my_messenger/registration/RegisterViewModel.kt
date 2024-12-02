@@ -1,16 +1,15 @@
-package com.example.my_messenger
+package com.example.my_messenger.registration
 
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
     private val _isRegistering = MutableLiveData<Boolean>()
-    val isRegistering: LiveData<Boolean> get() = _isRegistering
+
 
     private val _error = MutableLiveData<String?>()
     val error: LiveData<String?> get() = _error
@@ -26,6 +25,8 @@ class RegisterViewModel(private val auth: FirebaseAuth) : ViewModel() {
 
         _isRegistering.value = true
         _error.value = null
+
+        val name = auth.currentUser
 
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

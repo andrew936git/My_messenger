@@ -1,4 +1,4 @@
-package com.example.my_messenger
+package com.example.my_messenger.registration
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,16 +9,16 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.my_messenger.R
+import com.example.my_messenger.ViewModelFactory
 import com.example.my_messenger.databinding.FragmentRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
-
 
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: RegisterViewModel
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -43,16 +43,7 @@ class RegisterFragment : Fragment() {
         registerButton.setOnClickListener {
             val email = emailInput.text.toString()
             val password = passwordInput.text.toString()
-
-            registerButton.isEnabled = false
-            registerButton.text = "Загрузка..."
-
             viewModel.register(email, password)
-        }
-
-        viewModel.isRegistering.observe(viewLifecycleOwner) { isRegistering ->
-            registerButton.isEnabled = !isRegistering
-            registerButton.text = if (isRegistering) "Загрузка..." else "Зарегистрироваться"
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->
@@ -67,7 +58,6 @@ class RegisterFragment : Fragment() {
                 findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
             }
         }
-
     }
 }
 

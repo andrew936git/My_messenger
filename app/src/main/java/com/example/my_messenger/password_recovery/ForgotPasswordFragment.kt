@@ -1,4 +1,4 @@
-package com.example.my_messenger
+package com.example.my_messenger.password_recovery
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
+import com.example.my_messenger.ViewModelFactory
 import com.example.my_messenger.databinding.FragmentForgotPasswordBinding
 import com.google.firebase.auth.FirebaseAuth
 
