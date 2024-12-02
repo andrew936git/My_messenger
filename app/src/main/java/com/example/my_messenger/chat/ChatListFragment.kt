@@ -65,7 +65,7 @@ class ChatListFragment : Fragment() {
                 val message = Message(
                     id = messagesCollection.document().id,
                     message = messageText,
-                    senderId = userName.toString()
+                    senderId = userName
                 )
                 messagesCollection.document(message.id).set(message)
                 binding.editTextMessage.text.clear()

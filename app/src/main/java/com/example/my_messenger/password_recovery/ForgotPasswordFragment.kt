@@ -40,13 +40,12 @@ class ForgotPasswordFragment : Fragment() {
         sendEmailButton.setOnClickListener {
             val email = emailInput.text.toString().trim()
             sendEmailButton.isEnabled = false
-            sendEmailButton.text = "Отправка..."
             viewModel.sendResetEmail(email)
         }
 
         viewModel.isSendingEmail.observe(viewLifecycleOwner) { isSending ->
             sendEmailButton.isEnabled = !isSending
-            sendEmailButton.text = if (isSending) "Отправка..." else "Отправить письмо"
+            sendEmailButton.text = "Отправить письмо"
         }
 
         viewModel.error.observe(viewLifecycleOwner) { error ->

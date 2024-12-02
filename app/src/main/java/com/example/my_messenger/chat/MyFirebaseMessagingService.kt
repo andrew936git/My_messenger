@@ -19,17 +19,16 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     override fun onNewToken(token: String) {
         super.onNewToken(token)
         Log.d("FCM", "New token: $token")
-        // Отправьте токен на сервер, чтобы связать его с пользователем
+
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
-        // Получаем данные уведомления
+
         val title = remoteMessage.notification?.title ?: "Новое сообщение"
         val message = remoteMessage.notification?.body ?: "У вас новое сообщение"
 
-        // Показываем локальное уведомление
         sendNotification(title, message)
     }
 
