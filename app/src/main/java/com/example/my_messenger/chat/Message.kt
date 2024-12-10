@@ -1,8 +1,12 @@
 package com.example.my_messenger.chat
 
 data class Message(
-    val id: String = "",
+    var id: String = "",
     val message: String = "",
     val timestamp: Long = System.currentTimeMillis(),
-    val senderId: String = ""
+    val senderId: String = "",
+    val recipientId: String = ""
 )
+
+
+data class User(var email: String = "", var displayName: String = "")

@@ -20,4 +20,7 @@
     <string name="etRegisterPasswordHint">Пароль</string>
     <string name="etRegisterConfirmPasswordHint">Подтвердите пароль</string>
     <string name="btnRegisterText">Зарегистрироваться</string>
+    <string name="menu_profile_title">Профиль</string>
+    <string name="menu_about_title">О приложении</string>
+    <string name="menu_exit_title">Выход</string>
 </resources>

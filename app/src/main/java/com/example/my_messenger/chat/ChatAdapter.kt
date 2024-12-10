@@ -7,23 +7,38 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_messenger.R
 
-class ChatAdapter(private val messages: List<Message>) : RecyclerView.Adapter<ChatAdapter.ChatViewHolder>() {
+class ChatAdapter(private val users: List<User>): RecyclerView.Adapter<ChatAdapter.UserViewHolder>() {
 
-    class ChatViewHolder(view: View) : RecyclerView.ViewHolder(view) {
-        val senderTextView: TextView = view.findViewById(R.id.tvChatName)
-        val messageTextView: TextView = view.findViewById(R.id.tvLastMessage)
+    private var onChatClickListener: OnChatClickListener? = null
+
+    interface OnChatClickListener{
+        fun onChatClick(chat: User, position: Int)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ChatViewHolder {
+    inner class UserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        val userName: TextView = itemView.findViewById(R.id.tvChatName)
+    }
+
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item, parent, false)
-        return ChatViewHolder(view)
+        return UserViewHolder(view)
     }
 
-    override fun onBindViewHolder(holder: ChatViewHolder, position: Int) {
-        val chatMessage = messages[position]
-        holder.senderTextView.text = chatMessage.senderId
-        holder.messageTextView.text = chatMessage.message
+    override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
+        val user = users[position]
+        holder.userName.text = user.displayName
+        holder.itemView.setOnClickListener{
+            if (onChatClickListener != null){
+                onChatClickListener!!.onChatClick(user, position)
+            }
+        }
     }
 
-    override fun getItemCount() = messages.size
+    override fun getItemCount(): Int {
+        return users.size
+    }
+
+    fun setOnChatClickListener(onChatClickListener: OnChatClickListener){
+        this.onChatClickListener = onChatClickListener
+    }
 }

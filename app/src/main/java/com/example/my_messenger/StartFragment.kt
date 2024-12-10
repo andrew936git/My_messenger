@@ -31,16 +31,26 @@ class StartFragment : Fragment() {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onStart() {
+        super.onStart()
         lifecycleScope.launch {
             playAnim()
         }
+    }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
         lifecycleScope.launch {
-            delay(5000L)
-            transition()
+            delay(5000)
+            val currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                findNavController().navigate(R.id.action_start_fragment_to_chatListFragment)
+            } else {
+                transition()
+            }
         }
+
+
     }
 
     private fun playAnim(){
@@ -56,7 +66,6 @@ class StartFragment : Fragment() {
     }
 
     private fun transition(){
-
         findNavController().navigate(R.id.action_startFragment_to_loginFragment)
     }
 

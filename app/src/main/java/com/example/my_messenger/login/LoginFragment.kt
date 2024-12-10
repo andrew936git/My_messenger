@@ -31,20 +31,6 @@ class LoginFragment : Fragment() {
         val factory = ViewModelFactory(firebaseAuth)
         viewModel = ViewModelProvider(this, factory)[LoginViewModel::class.java]
 
-        try {
-            val fileInputStream = activity?.openFileInput("loginpasswordfile.txt")
-            val inputReader = InputStreamReader(fileInputStream)
-            val output = inputReader.readText().split("/")
-            val outputEmail = output[0]
-            val outputPassword = output[1]
-
-            if (outputEmail.isNotEmpty() &&  outputPassword.isNotEmpty()) {
-                viewModel.login(outputEmail, outputPassword)
-            }
-
-        } catch (e: Exception) {
-            e.printStackTrace()
-        }
         return binding.root
     }
 

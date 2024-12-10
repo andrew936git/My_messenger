@@ -1,21 +1,33 @@
 package com.example.my_messenger.chat
 
 import android.annotation.SuppressLint
+import android.content.ContentValues.TAG
 import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.my_messenger.R
 import com.example.my_messenger.databinding.FragmentChatListBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
+import com.google.firebase.firestore.toObject
+import java.io.InputStreamReader
 
 class ChatListFragment : Fragment() {
 
@@ -23,10 +35,7 @@ class ChatListFragment : Fragment() {
     private val binding get() = _binding!!
 
     private lateinit var chatAdapter: ChatAdapter
-    private val firestore = FirebaseFirestore.getInstance()
-    private val messagesCollection = firestore.collection("messages")
-    private val messages = mutableListOf<Message>()
-    private lateinit var userName: String
+    private var firestore = FirebaseFirestore.getInstance()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,81 +50,60 @@ class ChatListFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         binding.toolbar.apply {
-            setTitle("Чат")
-            setNavigationIcon(R.drawable.ic_menu)
-            //выход из профиля
-            setNavigationOnClickListener {
-                val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
-                fileOutputStream?.close()
-                findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
-            }
-        }
-
-        val users = FirebaseAuth.getInstance().currentUser?.email?.split("@")
-        userName = users?.get(0) ?: ""
-        chatAdapter = ChatAdapter(messages)
-        binding.recyclerView.adapter = chatAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        fetchExistingMessages()
-
-        binding.buttonSend.setOnClickListener {
-            val messageText = binding.editTextMessage.text.toString()
-            if (messageText.isNotEmpty()) {
-                val message = Message(
-                    id = messagesCollection.document().id,
-                    message = messageText,
-                    senderId = userName
-                )
-                messagesCollection.document(message.id).set(message)
-                binding.editTextMessage.text.clear()
-            }
-
-        }
-
-        messagesCollection.orderBy("timestamp", Query.Direction.ASCENDING)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Toast.makeText(requireContext(), "Unable to get new Messages", LENGTH_SHORT)
-                        .show()
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null && !snapshot.isEmpty) {
-                    messages.clear()
-                    for (document in snapshot.documents) {
-                        val message = document.toObject(Message::class.java)
-                        if (message != null) {
-                            messages.add(message)
-                        }
-                    }
-                    chatAdapter.notifyDataSetChanged()
-                    binding.recyclerView.scrollToPosition(messages.size - 1)
+            inflateMenu(R.menu.main_menu)
+            menu.apply {
+                findItem(R.id.profile).isVisible = false
+                findItem(R.id.about).isVisible = false
+                findItem(R.id.exit).isVisible = true
+                findItem(R.id.exit).setOnMenuItemClickListener {
+                    val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
+                    fileOutputStream?.close()
+                    findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
+                    true
                 }
             }
+
+            setTitle("Список чатов")
+        }
+
+        fetchUsers { users ->
+            chatAdapter = ChatAdapter(users)
+            binding.recyclerView.adapter = chatAdapter
+            binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+            binding.recyclerView.setHasFixedSize(true)
+            chatAdapter.setOnChatClickListener(object:
+                ChatAdapter.OnChatClickListener{
+                override fun onChatClick(chat: User, position: Int) {
+                    val bundle = Bundle()
+                    val chatName = users[position].displayName
+                    bundle.putString("chatId", chatName)
+                    val action = R.id.action_chatListFragment_to_personalChatFragment
+                    findNavController().navigate(action, bundle)
+                }
+            })
+        }
+
     }
 
-    @SuppressLint("NotifyDataSetChanged")
-    private fun fetchExistingMessages() {
-        messagesCollection.orderBy("timestamp", Query.Direction.ASCENDING)
+    private fun fetchUsers(callback: (List<User>) -> Unit) {
+        firestore.collection("users")
             .get()
-            .addOnSuccessListener { snapshot ->
-                if (snapshot != null && !snapshot.isEmpty) {
-                    messages.clear()
-                    for (document in snapshot.documents) {
-                        val message = document.toObject(Message::class.java)
-                        if (message != null) {
-                            messages.add(message)
-                        }
-                    }
-                    chatAdapter.notifyDataSetChanged()
-                    binding.recyclerView.scrollToPosition(messages.size - 1)
+            .addOnSuccessListener { result ->
+                val userList: List<User> = result.documents.mapNotNull { document ->
+                    document.toObject(User::class.java)
                 }
+
+                callback(userList)
             }
             .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Unable to fetch Messages", LENGTH_SHORT).show()
+                Log.e("Firestore", "Error fetching users", e)
+                callback(emptyList())
             }
     }
 }
+
+
+
+
 
 

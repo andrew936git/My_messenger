@@ -2,6 +2,7 @@ package com.example.my_messenger.registration
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,14 +12,19 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.findNavController
 import com.example.my_messenger.R
 import com.example.my_messenger.ViewModelFactory
+import com.example.my_messenger.chat.User
 import com.example.my_messenger.databinding.FragmentRegisterBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.firestore.FirebaseFirestore
 
 class RegisterFragment : Fragment() {
 
     private var _binding: FragmentRegisterBinding? = null
     private val binding get() = _binding!!
     private lateinit var viewModel: RegisterViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

@@ -71,7 +71,9 @@ dependencies {
     implementation(kotlin("script-runtime"))
     implementation ("com.google.firebase:firebase-messaging-ktx")
     implementation ("com.google.firebase:firebase-database-ktx")
+    implementation ("com.google.firebase:firebase-firestore:24.9.1")
     implementation ("com.google.firebase:firebase-auth-ktx")
     implementation ("com.squareup.retrofit2:retrofit:2.3.0")
     implementation ("com.squareup.retrofit2:converter-gson:2.3.0")
+
 }

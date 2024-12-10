@@ -15,10 +15,10 @@
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             />
+
         <action
-            android:id="@+id/action_startFragment_to_chat"
-            app:destination="@id/loginFragment"
-            />
+            android:id="@+id/action_start_fragment_to_chatListFragment"
+            app:destination="@id/chatListFragment" />
     </fragment>
 
     <fragment
@@ -40,12 +40,13 @@
         android:name="com.example.my_messenger.chat.ChatListFragment"
         android:label="fragment_chat_list"
         tools:layout="@layout/fragment_chat_list">
-        <argument
-            android:name="chatId"
-            app:argType="string" />
+
         <action
             android:id="@+id/action_chatListFragment_to_loginFragment"
             app:destination="@id/loginFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_personalChatFragment"
+            app:destination="@id/personalChatFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -61,6 +62,16 @@
         <action
             android:id="@+id/action_loginFragment_to_chatListFragment"
             app:destination="@id/chatListFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/personalChatFragment"
+        android:name="com.example.my_messenger.chat.PersonalChatFragment"
+        android:label="PersonalChatFragment" >
+
+        <argument
+            android:name="chatId"
+            android:defaultValue="" />
+
     </fragment>
 
 
