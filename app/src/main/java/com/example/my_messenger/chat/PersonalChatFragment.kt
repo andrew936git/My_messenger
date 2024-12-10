@@ -56,19 +56,16 @@ class PersonalChatFragment : Fragment() {
             menu.apply {
                 findItem(R.id.profile).isVisible = false
                 findItem(R.id.about).isVisible = false
-                findItem(R.id.exit).isVisible = false
-
+                findItem(R.id.exit).isVisible = true
+                findItem(R.id.exit).setOnMenuItemClickListener {
+                    val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
+                    fileOutputStream?.close()
+                    findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
+                    true
+                }
             }
+
             setTitle("Сообщения")
-
-
-            setNavigationIcon(R.drawable.ic_menu)
-            //выход из профиля
-            /*setNavigationOnClickListener {
-                val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
-                fileOutputStream?.close()
-                findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
-            }*/
         }
 
         messageAdapter = MessageAdapter(messages)
