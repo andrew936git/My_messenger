@@ -9,7 +9,11 @@ import com.example.my_messenger.R
 
 class MessageAdapter(private val messages: MutableList<Message>): RecyclerView.Adapter<MessageAdapter.MessageViewHolder>() {
 
+    private var onMessageClickListener: OnMessageClickListener? = null
 
+    interface OnMessageClickListener{
+        fun onMessageClick(message: Message, position: Int)
+    }
 
     inner class MessageViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val userName: TextView = itemView.findViewById(R.id.tvChatName)
@@ -25,9 +29,18 @@ class MessageAdapter(private val messages: MutableList<Message>): RecyclerView.A
         val message = messages[position]
         holder.userName.text = message.senderId
         holder.text.text = message.message
+        holder.itemView.setOnClickListener{
+            if (onMessageClickListener != null){
+                onMessageClickListener!!.onMessageClick(message, position)
+            }
+        }
     }
 
     override fun getItemCount(): Int {
         return messages.size
+    }
+
+    fun setOnMessageClickListener(onMessageClickListener: OnMessageClickListener){
+        this.onMessageClickListener = onMessageClickListener
     }
 }

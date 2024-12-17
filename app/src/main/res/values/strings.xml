@@ -23,4 +23,13 @@
     <string name="menu_profile_title">Профиль</string>
     <string name="menu_about_title">О приложении</string>
     <string name="menu_exit_title">Выход</string>
+    <string name="nameETHint">Имя</string>
+    <string name="surnameETHint">Фамилия</string>
+    <string name="craftETHint">Род занятий</string>
+    <string name="ageETHint">Возраст</string>
+    <string name="cityETHint">Город</string>
+    <string name="saveBTHint">Сохранить</string>
+    <string name="sendBTText">Send</string>
+    <string name="type_a_message_hint">Введите сообщение</string>
+    <string name="btnSenResetEmailText">Отправить письмо</string>
 </resources>

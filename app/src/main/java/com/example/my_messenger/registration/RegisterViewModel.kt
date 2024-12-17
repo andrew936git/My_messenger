@@ -47,8 +47,8 @@ class RegisterViewModel(private val auth: FirebaseAuth) : ViewModel() {
         val currentUser = auth.currentUser
         currentUser?.let {
             val displayName = it.email?.trim('@') ?: ""
-
             val user = User(
+                id = it.uid,
                 it.email!!,
                 displayName
             )

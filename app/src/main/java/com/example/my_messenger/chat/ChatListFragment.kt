@@ -13,6 +13,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.FragmentNavigatorExtras
 import androidx.navigation.fragment.findNavController
@@ -52,7 +53,7 @@ class ChatListFragment : Fragment() {
         binding.toolbar.apply {
             inflateMenu(R.menu.main_menu)
             menu.apply {
-                findItem(R.id.profile).isVisible = false
+                findItem(R.id.profile).isVisible = true
                 findItem(R.id.about).isVisible = false
                 findItem(R.id.exit).isVisible = true
                 findItem(R.id.exit).setOnMenuItemClickListener {
@@ -61,9 +62,14 @@ class ChatListFragment : Fragment() {
                     findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
                     true
                 }
+
+                findItem(R.id.profile).setOnMenuItemClickListener {
+                    findNavController().navigate(R.id.action_chatListFragment_to_profileFragment)
+                    true
+                }
             }
 
-            setTitle("Список чатов")
+            setTitle("Список пользователей")
         }
 
         fetchUsers { users ->
@@ -74,11 +80,25 @@ class ChatListFragment : Fragment() {
             chatAdapter.setOnChatClickListener(object:
                 ChatAdapter.OnChatClickListener{
                 override fun onChatClick(chat: User, position: Int) {
-                    val bundle = Bundle()
-                    val chatName = users[position].displayName
-                    bundle.putString("chatId", chatName)
-                    val action = R.id.action_chatListFragment_to_personalChatFragment
-                    findNavController().navigate(action, bundle)
+                    val dialog = AlertDialog.Builder(requireContext())
+                    dialog.setTitle("Что вы хотите выполнить?")
+                    dialog.setPositiveButton("Перейти к сообщениям"){_, _->
+                        val bundle = Bundle()
+                        val chatName = users[position].displayName
+                        bundle.putString("chatId", chatName)
+                        val action = R.id.action_chatListFragment_to_personalChatFragment
+                        findNavController().navigate(action, bundle)
+
+                    }
+                    dialog.setNegativeButton("Перейти к профилю"){_,_->
+                        val bundle = Bundle()
+                        val chatName = users[position].displayName
+                        bundle.putString("userId", chatName)
+                        val action = R.id.action_chatListFragment_to_aboutUserFragment
+                        findNavController().navigate(action, bundle)
+                    }
+                    dialog.create().show()
+
                 }
             })
         }

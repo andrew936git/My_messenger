@@ -47,6 +47,12 @@
         <action
             android:id="@+id/action_chatListFragment_to_personalChatFragment"
             app:destination="@id/personalChatFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+        <action
+            android:id="@+id/action_chatListFragment_to_aboutUserFragment"
+            app:destination="@id/aboutUserFragment" />
     </fragment>
     <fragment
         android:id="@+id/loginFragment"
@@ -71,7 +77,27 @@
         <argument
             android:name="chatId"
             android:defaultValue="" />
+        <action
+            android:id="@+id/action_personalChatFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
 
+    </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.my_messenger.registration.ProfileFragment"
+        android:label="ProfileFragment"
+        >
+
+    </fragment>
+    <fragment
+        android:id="@+id/aboutUserFragment"
+        android:name="com.example.my_messenger.registration.AboutUserFragment"
+        android:label="fragment_about_user"
+        tools:layout="@layout/fragment_about_user">
+
+        <argument
+            android:name="userId"
+            android:defaultValue="" />
     </fragment>
 
 

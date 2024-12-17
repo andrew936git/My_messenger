@@ -11,6 +11,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
+import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -18,9 +19,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.my_messenger.R
 import com.example.my_messenger.databinding.FragmentPersonalChatBinding
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.io.InputStreamReader
+import java.lang.reflect.Field
 
 
 class PersonalChatFragment : Fragment() {
@@ -51,44 +54,6 @@ class PersonalChatFragment : Fragment() {
         }
         val senderName = FirebaseAuth.getInstance().currentUser?.email
 
-        binding.toolbar.apply {
-            inflateMenu(R.menu.main_menu)
-            menu.apply {
-                findItem(R.id.profile).isVisible = false
-                findItem(R.id.about).isVisible = false
-                findItem(R.id.exit).isVisible = true
-                findItem(R.id.exit).setOnMenuItemClickListener {
-                    val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
-                    fileOutputStream?.close()
-                    findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
-                    true
-                }
-            }
-
-            setTitle("Сообщения")
-        }
-
-        messageAdapter = MessageAdapter(messages)
-        binding.recyclerView.adapter = messageAdapter
-        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
-
-        fetchExistingMessages()
-
-        binding.buttonSend.setOnClickListener {
-            val messageText = binding.editTextMessage.text.toString()
-            if (messageText.isNotEmpty()) {
-                val message = Message(
-                    id = messagesCollection.document().id,
-                    message = messageText,
-                    senderId = senderName!!,
-                    recipientId = recipientName!!
-                )
-                messagesCollection.document(message.id).set(message)
-                binding.editTextMessage.text.clear()
-            }
-
-        }
-
         messagesCollection.orderBy("timestamp", Query.Direction.ASCENDING)
             .addSnapshotListener { snapshot, e ->
                 if (e != null) {
@@ -110,6 +75,69 @@ class PersonalChatFragment : Fragment() {
                     binding.recyclerView.scrollToPosition(messages.size - 1)
                 }
             }
+
+
+
+        binding.toolbar.apply {
+            inflateMenu(R.menu.main_menu)
+            menu.apply {
+                findItem(R.id.profile).isVisible = true
+                findItem(R.id.about).isVisible = false
+                findItem(R.id.exit).isVisible = true
+                findItem(R.id.exit).setOnMenuItemClickListener {
+                    val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
+                    fileOutputStream?.close()
+                    findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
+                    true
+                }
+
+                findItem(R.id.profile).setOnMenuItemClickListener {
+                    findNavController().navigate(R.id.action_personalChatFragment_to_profileFragment)
+                    true
+                }
+            }
+            setTitle("Сообщения")
+        }
+
+        messageAdapter = MessageAdapter(messages)
+        binding.recyclerView.adapter = messageAdapter
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        messageAdapter.notifyDataSetChanged()
+
+
+        binding.buttonSend.setOnClickListener {
+            val messageText = binding.editTextMessage.text.toString()
+            if (messageText.isNotEmpty()) {
+                val message = Message(
+                    id = messagesCollection.document().id,
+                    message = messageText,
+                    senderId = senderName!!,
+                    recipientId = recipientName!!
+                )
+                messagesCollection.document(message.id).set(message)
+                binding.editTextMessage.text.clear()
+            }
+
+        }
+
+        messageAdapter.setOnMessageClickListener(object:
+            MessageAdapter.OnMessageClickListener{
+            override fun onMessageClick(message: Message,position: Int) {
+                val dialog = AlertDialog.Builder(requireContext())
+                dialog.setTitle("Что вы хотите выполнить?")
+                dialog.setPositiveButton("Удалить сообщение"){_, _->
+                    FirebaseFirestore.getInstance().collection("messages").document(message.id).delete()
+                    messages.removeAt(position)
+                    messageAdapter.notifyDataSetChanged()
+
+                }
+                dialog.setNegativeButton("Отмена"){_,_->}
+                dialog.create().show()
+                false
+            }
+
+        })
+
     }
 
     @SuppressLint("NotifyDataSetChanged")
