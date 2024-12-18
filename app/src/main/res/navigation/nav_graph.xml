@@ -84,14 +84,14 @@
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
-        android:name="com.example.my_messenger.registration.ProfileFragment"
+        android:name="com.example.my_messenger.users.ProfileFragment"
         android:label="ProfileFragment"
         >
 
     </fragment>
     <fragment
         android:id="@+id/aboutUserFragment"
-        android:name="com.example.my_messenger.registration.AboutUserFragment"
+        android:name="com.example.my_messenger.users.AboutUserFragment"
         android:label="fragment_about_user"
         tools:layout="@layout/fragment_about_user">
 

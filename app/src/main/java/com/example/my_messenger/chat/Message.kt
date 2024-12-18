@@ -1,29 +1,29 @@
 package com.example.my_messenger.chat
 
-import java.io.Serializable
+import com.example.my_messenger.R
 
 data class Message(
     var id: String = "",
-    val message: String = "",
+    var message: String = "",
     val timestamp: Long = System.currentTimeMillis(),
     val senderId: String = "",
-    val recipientId: String = ""
-)
+    val recipientId: String = "",
 
-
-data class User(
-    var id: String = "",
-    var email: String = "",
-    var displayName: String = "",
-    var name: String = "",
-    var surname: String = "",
-    var craft: String = "",
-    var age: String = "",
-    var city: String = ""
     ){
     companion object{
-        val list = listOf(
-            ""
+        val emoji = listOf(
+            R.drawable.emoji_1,
+            R.drawable.emoji_2,
+            R.drawable.emoji_3,
+            R.drawable.emoji_4,
+            R.drawable.emoji_5,
+            R.drawable.emoji_6,
+            R.drawable.emoji_7,
+            R.drawable.emoji_8,
+            R.drawable.emoji_9,
         )
     }
 }
+
+
+

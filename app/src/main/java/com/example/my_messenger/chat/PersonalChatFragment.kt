@@ -3,6 +3,8 @@ package com.example.my_messenger.chat
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.graphics.Bitmap
+import android.graphics.Canvas
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -12,6 +14,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
@@ -24,12 +27,13 @@ import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import java.io.InputStreamReader
 import java.lang.reflect.Field
+import kotlin.random.Random
+import kotlin.script.dependencies.ScriptContents
 
 
 class PersonalChatFragment : Fragment() {
     private var _binding: FragmentPersonalChatBinding? = null
     private val binding get() = _binding!!
-    private var senderName: String? = null
     private var recipientName: String? = null
     private lateinit var messageAdapter: MessageAdapter
     private val firestore = FirebaseFirestore.getInstance()
@@ -76,8 +80,6 @@ class PersonalChatFragment : Fragment() {
                 }
             }
 
-
-
         binding.toolbar.apply {
             inflateMenu(R.menu.main_menu)
             menu.apply {
@@ -104,7 +106,6 @@ class PersonalChatFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         messageAdapter.notifyDataSetChanged()
 
-
         binding.buttonSend.setOnClickListener {
             val messageText = binding.editTextMessage.text.toString()
             if (messageText.isNotEmpty()) {
@@ -112,11 +113,22 @@ class PersonalChatFragment : Fragment() {
                     id = messagesCollection.document().id,
                     message = messageText,
                     senderId = senderName!!,
-                    recipientId = recipientName!!
+                    recipientId = recipientName!!,
+
                 )
                 messagesCollection.document(message.id).set(message)
                 binding.editTextMessage.text.clear()
             }
+
+        }
+        binding.emojiCV.setOnClickListener {
+            val message = Message(
+                id = messagesCollection.document().id,
+                message = "image",
+                senderId = senderName!!,
+                recipientId = recipientName!!,
+            )
+            messagesCollection.document(message.id).set(message)
 
         }
 
@@ -138,29 +150,6 @@ class PersonalChatFragment : Fragment() {
 
         })
 
-    }
-
-    @SuppressLint("NotifyDataSetChanged")
-    private fun fetchExistingMessages() {
-        messagesCollection.orderBy("timestamp", Query.Direction.ASCENDING)
-            .get()
-            .addOnSuccessListener { snapshot ->
-                if (snapshot != null && !snapshot.isEmpty) {
-                    messages.clear()
-                    for (document in snapshot.documents) {
-                        val message = document.toObject(Message::class.java)
-                        if (message?.senderId == senderName && message?.recipientId == recipientName
-                            || message?.senderId == recipientName && message?.recipientId == senderName) {
-                            messages.add((message ?: "") as Message)
-                        }
-                    }
-                    messageAdapter.notifyDataSetChanged()
-                    binding.recyclerView.scrollToPosition(messages.size - 1)
-                }
-            }
-            .addOnFailureListener { e ->
-                Toast.makeText(requireContext(), "Unable to fetch Messages", LENGTH_SHORT).show()
-            }
     }
 
 }

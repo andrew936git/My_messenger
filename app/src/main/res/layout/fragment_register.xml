@@ -51,7 +51,6 @@
         android:layout_height="wrap_content"
         android:text="@string/btnRegisterText"
         android:layout_marginTop="@dimen/_16dp"
-        android:backgroundTint="@color/button_color"
         app:layout_constraintTop_toBottomOf="@id/etRegisterPassword"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
