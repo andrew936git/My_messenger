@@ -12,7 +12,6 @@ data class Message(
     ){
     companion object{
         val emoji = listOf(
-            R.drawable.emoji_1,
             R.drawable.emoji_2,
             R.drawable.emoji_3,
             R.drawable.emoji_4,

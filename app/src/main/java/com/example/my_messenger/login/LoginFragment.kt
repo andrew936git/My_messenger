@@ -77,7 +77,7 @@ class LoginFragment : Fragment() {
 
         viewModel.isLoggedIn.observe(viewLifecycleOwner) { isLoggedIn ->
             if (isLoggedIn) {
-                findNavController().navigate(R.id.action_loginFragment_to_chatListFragment)
+                findNavController().navigate(R.id.action_loginFragment_to_mainFragment)
             }
         }
 

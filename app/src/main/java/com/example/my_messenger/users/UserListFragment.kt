@@ -1,4 +1,4 @@
-package com.example.my_messenger.chat
+package com.example.my_messenger.users
 
 import android.annotation.SuppressLint
 import android.os.Bundle
@@ -10,17 +10,15 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.my_messenger.R
-import com.example.my_messenger.databinding.FragmentChatListBinding
-import com.example.my_messenger.users.ChatAdapter
-import com.example.my_messenger.users.User
+import com.example.my_messenger.databinding.FragmentUserListBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 
-class ChatListFragment : Fragment() {
 
-    private var _binding: FragmentChatListBinding? = null
+class UserListFragment : Fragment() {
+
+    private var _binding: FragmentUserListBinding? = null
     private val binding get() = _binding!!
-
     private lateinit var chatAdapter: ChatAdapter
     private var firestore = FirebaseFirestore.getInstance()
 
@@ -28,7 +26,7 @@ class ChatListFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        _binding = FragmentChatListBinding.inflate(inflater, container, false)
+        _binding = FragmentUserListBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -47,14 +45,14 @@ class ChatListFragment : Fragment() {
                 ChatAdapter.OnChatClickListener{
                 override fun onChatClick(chat: User, position: Int) {
                     val bundle = Bundle()
-                    val chatName = users[position].displayName
-                    bundle.putString("chatId", chatName)
-                    val action = R.id.action_chatListFragment_to_personalChatFragment
+                    val chatName = users[position].email
+                    bundle.putString("userId", chatName)
+                    val action = R.id.action_userListFragment_to_aboutUserFragment
                     findNavController().navigate(action, bundle)
 
                 }
             })
-            }
+        }
     }
 
     private fun fetchUsers(callback: (List<User>) -> Unit) {
@@ -67,7 +65,8 @@ class ChatListFragment : Fragment() {
                 val users = mutableListOf<User>()
                 for (user in userList){
                     if (user.email == FirebaseAuth.getInstance().currentUser?.email){
-                        continue
+                        user.displayName = "Мой профиль"
+                        users.add(user)
                     }
                     else users.add(user)
                 }
@@ -80,9 +79,3 @@ class ChatListFragment : Fragment() {
             }
     }
 }
-
-
-
-
-
-

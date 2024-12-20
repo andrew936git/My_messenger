@@ -13,7 +13,6 @@ import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.ViewModelProvider
 import com.example.my_messenger.databinding.FragmentAboutUserBinding
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -25,7 +24,6 @@ class AboutUserFragment : Fragment() {
     private var _binding: FragmentAboutUserBinding? = null
     private val binding get() = _binding!!
     private lateinit var profile: User
-    private lateinit var viewModel: SharedViewModel
     private val firestore = FirebaseFirestore.getInstance()
     private val avatarCollection = firestore.collection("avatar")
     private val avatarsList = mutableListOf<Avatar>()
@@ -41,7 +39,6 @@ class AboutUserFragment : Fragment() {
     @SuppressLint("SetTextI18n")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        viewModel = ViewModelProvider(requireActivity())[SharedViewModel::class.java]
         val userId = arguments?.getString("userId")
 
         avatarCollection.orderBy("id", Query.Direction.ASCENDING)
@@ -74,17 +71,10 @@ class AboutUserFragment : Fragment() {
                     for (user in userList) {
                         if (userId == user.email) {
                             profile = user
-                            if(FirebaseAuth.getInstance().currentUser?.email == profile.email) {
-                                viewModel.stringData.observe(viewLifecycleOwner) { data ->
-                                    if (data != null) {
-                                        binding.circleImageView.setImageURI(Uri.parse(data))
-
-
-                                    } else {
-                                        for (i in avatarsList) {
-                                            if (i.id == profile.id) getAvatar(i.position)
-                                        }
-                                    }
+                            if(FirebaseAuth.getInstance().currentUser?.uid == profile.id) {
+                                if (User.myAvatar == "") continue
+                                else {
+                                    binding.circleImageView.setImageURI(Uri.parse(User.myAvatar))
                                 }
                             }
                             else {

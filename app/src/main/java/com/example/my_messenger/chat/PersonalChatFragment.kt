@@ -1,34 +1,25 @@
-
 package com.example.my_messenger.chat
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.graphics.Bitmap
-import android.graphics.Canvas
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Toast
 import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.fragment.navArgs
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.my_messenger.R
 import com.example.my_messenger.databinding.FragmentPersonalChatBinding
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
-import java.io.InputStreamReader
-import java.lang.reflect.Field
 import kotlin.random.Random
-import kotlin.script.dependencies.ScriptContents
 
 
 class PersonalChatFragment : Fragment() {
@@ -39,7 +30,6 @@ class PersonalChatFragment : Fragment() {
     private val firestore = FirebaseFirestore.getInstance()
     private val messagesCollection = firestore.collection("messages")
     private val messages = mutableListOf<Message>()
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -71,7 +61,8 @@ class PersonalChatFragment : Fragment() {
                     for (document in snapshot.documents) {
                         val message = document.toObject(Message::class.java)
                         if (message?.senderId == senderName && message?.recipientId == recipientName
-                            || message?.senderId == recipientName && message?.recipientId == senderName) {
+                            || message?.senderId == recipientName && message?.recipientId == senderName
+                        ) {
                             messages.add((message ?: "") as Message)
                         }
                     }
@@ -80,76 +71,70 @@ class PersonalChatFragment : Fragment() {
                 }
             }
 
-        binding.toolbar.apply {
-            inflateMenu(R.menu.main_menu)
-            menu.apply {
-                findItem(R.id.profile).isVisible = true
-                findItem(R.id.about).isVisible = false
-                findItem(R.id.exit).isVisible = true
-                findItem(R.id.exit).setOnMenuItemClickListener {
-                    val fileOutputStream = activity?.openFileOutput("loginpasswordfile.txt", Context.MODE_PRIVATE)
-                    fileOutputStream?.close()
-                    findNavController().navigate(R.id.action_chatListFragment_to_loginFragment)
-                    true
-                }
-
-                findItem(R.id.profile).setOnMenuItemClickListener {
-                    findNavController().navigate(R.id.action_personalChatFragment_to_profileFragment)
-                    true
-                }
-            }
-            setTitle("Сообщения")
-        }
-
         messageAdapter = MessageAdapter(messages)
         binding.recyclerView.adapter = messageAdapter
         binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
         messageAdapter.notifyDataSetChanged()
 
+        binding.editTextMessage.setOnKeyListener { _, actionId, event ->
+            if (actionId == EditorInfo.IME_ACTION_DONE ||
+                (event?.keyCode == KeyEvent.KEYCODE_ENTER && event.action == KeyEvent.ACTION_DOWN)
+            ) {
+                binding.buttonSend.performClick()
+                true
+            } else {
+                false
+            }
+        }
+
         binding.buttonSend.setOnClickListener {
             val messageText = binding.editTextMessage.text.toString()
-            if (messageText.isNotEmpty()) {
-                val message = Message(
-                    id = messagesCollection.document().id,
-                    message = messageText,
-                    senderId = senderName!!,
-                    recipientId = recipientName!!,
-
-                )
-                messagesCollection.document(message.id).set(message)
-                binding.editTextMessage.text.clear()
-            }
+            sendMessage(messageText, senderName)
 
         }
         binding.emojiCV.setOnClickListener {
+
+            val random = Random
             val message = Message(
                 id = messagesCollection.document().id,
-                message = "image",
+                message = "image${random.nextInt(0, 8)}",
                 senderId = senderName!!,
                 recipientId = recipientName!!,
-            )
-            messagesCollection.document(message.id).set(message)
 
+                )
+            messagesCollection.document(message.id).set(message)
         }
 
-        messageAdapter.setOnMessageClickListener(object:
-            MessageAdapter.OnMessageClickListener{
-            override fun onMessageClick(message: Message,position: Int) {
+        messageAdapter.setOnMessageClickListener(object :
+            MessageAdapter.OnMessageClickListener {
+            override fun onMessageClick(message: Message, position: Int) {
                 val dialog = AlertDialog.Builder(requireContext())
                 dialog.setTitle("Что вы хотите выполнить?")
-                dialog.setPositiveButton("Удалить сообщение"){_, _->
-                    FirebaseFirestore.getInstance().collection("messages").document(message.id).delete()
+                dialog.setPositiveButton("Удалить сообщение") { _, _ ->
+                    FirebaseFirestore.getInstance().collection("messages").document(message.id)
+                        .delete()
                     messages.removeAt(position)
                     messageAdapter.notifyDataSetChanged()
 
                 }
-                dialog.setNegativeButton("Отмена"){_,_->}
+                dialog.setNegativeButton("Отмена") { _, _ -> }
                 dialog.create().show()
-                false
             }
-
         })
+    }
 
+    private fun sendMessage(messageText: String, senderName: String?) {
+        if (messageText.isNotEmpty()) {
+            val message = Message(
+                id = messagesCollection.document().id,
+                message = messageText,
+                senderId = senderName!!,
+                recipientId = recipientName!!,
+
+                )
+            messagesCollection.document(message.id).set(message)
+            binding.editTextMessage.text.clear()
+        }
     }
 
 }

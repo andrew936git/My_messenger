@@ -1,8 +1,9 @@
-package com.example.my_messenger.chat
+package com.example.my_messenger.users
 
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.Canvas
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,8 +13,7 @@ import android.widget.Toast.LENGTH_SHORT
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.my_messenger.R
-import com.example.my_messenger.users.Avatar
-import com.example.my_messenger.users.User
+import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.Query
 import de.hdodenhof.circleimageview.CircleImageView
@@ -44,26 +44,31 @@ class ChatAdapter(private val users: List<User>): RecyclerView.Adapter<ChatAdapt
     override fun onBindViewHolder(holder: UserViewHolder, position: Int) {
 
         val user = users[position]
-        avatarCollection.orderBy("id", Query.Direction.ASCENDING)
-            .addSnapshotListener { snapshot, e ->
-                if (e != null) {
-                    Toast.makeText(context, "Unable to get avatar", LENGTH_SHORT)
-                        .show()
-                    return@addSnapshotListener
-                }
-
-                if (snapshot != null && !snapshot.isEmpty) {
-
-                    for (document in snapshot.documents) {
-                        val avatar = document.toObject(Avatar::class.java)
-                        if (avatar?.id == user.id) {
-                            userAvatar = avatar
-                            holder.avatar.setImageBitmap(getAvatar(userAvatar.position))
-                        }
+        if (user.id == FirebaseAuth.getInstance().currentUser?.uid){
+            holder.avatar.setImageURI(Uri.parse(User.myAvatar))
+        }
+        else {
+            avatarCollection.orderBy("id", Query.Direction.ASCENDING)
+                .addSnapshotListener { snapshot, e ->
+                    if (e != null) {
+                        Toast.makeText(context, "Unable to get avatar", LENGTH_SHORT)
+                            .show()
+                        return@addSnapshotListener
                     }
 
+                    if (snapshot != null && !snapshot.isEmpty) {
+
+                        for (document in snapshot.documents) {
+                            val avatar = document.toObject(Avatar::class.java)
+                            if (avatar?.id == user.id) {
+                                userAvatar = avatar
+                                holder.avatar.setImageBitmap(getAvatar(userAvatar.position))
+                            }
+                        }
+
+                    }
                 }
-            }
+        }
         holder.userName.text = user.displayName
 
         holder.itemView.setOnClickListener{

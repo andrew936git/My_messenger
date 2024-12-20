@@ -15,10 +15,10 @@
             android:id="@+id/action_startFragment_to_loginFragment"
             app:destination="@id/loginFragment"
             />
-
         <action
-            android:id="@+id/action_start_fragment_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
+            android:id="@+id/action_start_fragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+
     </fragment>
 
     <fragment
@@ -35,25 +35,7 @@
         android:name="com.example.my_messenger.password_recovery.ForgotPasswordFragment"
         android:label="fragment_forgot_password"
         tools:layout="@layout/fragment_forgot_password" />
-    <fragment
-        android:id="@+id/chatListFragment"
-        android:name="com.example.my_messenger.chat.ChatListFragment"
-        android:label="fragment_chat_list"
-        tools:layout="@layout/fragment_chat_list">
 
-        <action
-            android:id="@+id/action_chatListFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
-        <action
-            android:id="@+id/action_chatListFragment_to_personalChatFragment"
-            app:destination="@id/personalChatFragment" />
-        <action
-            android:id="@+id/action_chatListFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-        <action
-            android:id="@+id/action_chatListFragment_to_aboutUserFragment"
-            app:destination="@id/aboutUserFragment" />
-    </fragment>
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.my_messenger.login.LoginFragment"
@@ -66,27 +48,22 @@
             android:id="@+id/action_loginFragment_to_forgotPasswordFragment"
             app:destination="@id/forgotPasswordFragment" />
         <action
-            android:id="@+id/action_loginFragment_to_chatListFragment"
-            app:destination="@id/chatListFragment" />
+            android:id="@+id/action_loginFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
     </fragment>
-    <fragment
-        android:id="@+id/personalChatFragment"
-        android:name="com.example.my_messenger.chat.PersonalChatFragment"
-        android:label="PersonalChatFragment" >
 
-        <argument
-            android:name="chatId"
-            android:defaultValue="" />
-        <action
-            android:id="@+id/action_personalChatFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
-
-    </fragment>
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.my_messenger.users.ProfileFragment"
         android:label="ProfileFragment"
         >
+
+        <argument
+            android:name="userId"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_profileFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
 
     </fragment>
     <fragment
@@ -98,6 +75,69 @@
         <argument
             android:name="userId"
             android:defaultValue="" />
+    </fragment>
+    <fragment
+        android:id="@+id/mainFragment"
+        android:name="com.example.my_messenger.main.MainFragment"
+        android:label="fragment_main"
+        tools:layout="@layout/fragment_main" >
+
+        <action
+            android:id="@+id/action_chatListFragment_to_personalChatFragment"
+            app:destination="@id/personalChatFragment" />
+
+        <action
+            android:id="@+id/action_userListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+
+        <action
+            android:id="@+id/action_userListFragment_to_aboutUserFragment"
+            app:destination="@id/aboutUserFragment" />
+        <argument
+            android:name="avatar"
+            android:defaultValue="" />
+        <action
+            android:id="@+id/action_mainFragment_to_loginFragment"
+            app:destination="@id/loginFragment" />
+
+        <action
+            android:id="@+id/action_mainFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+
+    </fragment>
+
+    <fragment
+        android:id="@+id/chatListFragment"
+        android:name="com.example.my_messenger.chat.ChatListFragment"
+        android:label="fragment_chat_list"
+        tools:layout="@layout/fragment_chat_list">
+        <action
+            android:id="@+id/action_chatListFragment_to_aboutUserFragment"
+            app:destination="@id/aboutUserFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/userListFragment"
+        android:name="com.example.my_messenger.users.UserListFragment"
+        android:label="fragment_user_list"
+        tools:layout="@layout/fragment_user_list">
+        <action
+            android:id="@+id/action_userListFragment_to_aboutUserFragment"
+            app:destination="@id/aboutUserFragment" />
+        <action
+            android:id="@+id/action_userListFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/personalChatFragment"
+        android:name="com.example.my_messenger.chat.PersonalChatFragment"
+        android:label="PersonalChatFragment" >
+
+        <argument
+            android:name="chatId"
+            android:defaultValue="" />
+
     </fragment>
 
 

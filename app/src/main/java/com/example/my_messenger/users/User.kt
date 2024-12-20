@@ -1,7 +1,5 @@
 package com.example.my_messenger.users
 
-import com.example.my_messenger.R
-
 data class User(
     var id: String = "",
     var email: String = "",
@@ -12,3 +10,8 @@ data class User(
     var age: String = "",
     var city: String = "",
 )
+{
+    companion object{
+        var myAvatar: String = ""
+    }
+}

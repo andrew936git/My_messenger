@@ -32,4 +32,5 @@
     <string name="sendBTText">Send</string>
     <string name="type_a_message_hint">Введите сообщение</string>
     <string name="btnSenResetEmailText">Отправить письмо</string>
+    <string name="ci_description">Добавить фото</string>
 </resources>
